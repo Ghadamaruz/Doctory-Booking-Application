@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
+import { createNotification } from "@/lib/notifications";
 import { PatientLayout } from "@/components/layout/PatientLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -213,15 +214,13 @@ export default function DoctorProfile() {
         }
 
         // Create notification for the doctor
-        await supabase
-          .from('notifications')
-          .insert({
-            user_id: doctorId,
-            title: t('newAppointmentRequest'),
-            message: `${user.profile?.first_name} ${user.profile?.last_name} ${t('hasRequestedAppointment')} ${format(selectedDate, 'MMM dd')} ${t('at')} ${selectedTime}`,
-            type: 'appointment',
-            related_id: doctorId
-          });
+        await createNotification({
+          user_id: doctorId,
+          title: t('newAppointmentRequest'),
+          message: `${user.profile?.first_name} ${user.profile?.last_name} ${t('hasRequestedAppointment')} ${format(selectedDate, 'MMM dd')} ${t('at')} ${selectedTime}`,
+          type: 'appointment',
+          related_id: doctorId
+        }, supabase);
 
         toast({
           title: t("appointmentBooked"),
@@ -267,15 +266,13 @@ export default function DoctorProfile() {
         }
 
         // Create notification for the doctor about guest booking
-        await supabase
-          .from('notifications')
-          .insert({
-            user_id: doctorId,
-            title: t('newGuestAppointmentRequest'),
-            message: `${guestData.firstName} ${guestData.lastName} (${t('guest')}) ${t('hasRequestedAppointment')} ${format(selectedDate, 'MMM dd')} ${t('at')} ${selectedTime}`,
-            type: 'appointment',
-            related_id: doctorId
-          });
+        await createNotification({
+          user_id: doctorId,
+          title: t('newGuestAppointmentRequest'),
+          message: `${guestData.firstName} ${guestData.lastName} (${t('guest')}) ${t('hasRequestedAppointment')} ${format(selectedDate, 'MMM dd')} ${t('at')} ${selectedTime}`,
+          type: 'appointment',
+          related_id: doctorId
+        }, supabase);
 
         toast({
           title: t("appointmentBooked"),

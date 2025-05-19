@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
+import { createNotification } from "@/lib/notifications";
 import { DoctorLayout } from "@/components/layout/DoctorLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -109,7 +110,7 @@ export default function DoctorAppointments() {
         message: `Your appointment on ${format(parseISO(appointmentToReject.appointment_date), 'MMM d, yyyy')} at ${formatAppointmentTime(appointmentToReject.start_time)} has been rejected.${reason ? ` Reason: ${reason}` : ''}`,
         related_id: appointmentToReject.id,
         type: "appointment"
-      });
+      }, supabase);
 
       toast({
         title: "Appointment Rejected",
@@ -148,7 +149,7 @@ export default function DoctorAppointments() {
         message: `Your appointment on ${format(parseISO(appointmentDate), 'MMM d, yyyy')} at ${formatAppointmentTime(appointmentTime)} has been confirmed.`,
         related_id: appointmentId,
         type: "appointment"
-      });
+      }, supabase);
 
       toast({
         title: "Appointment Confirmed",
@@ -168,25 +169,6 @@ export default function DoctorAppointments() {
     }
   };
 
-  const createNotification = async (notificationData: {
-    user_id: string;
-    title: string;
-    message: string;
-    related_id?: string;
-    type?: string;
-  }) => {
-    try {
-      await supabase
-        .from('notifications')
-        .insert({
-          ...notificationData,
-          read: false,
-          created_at: new Date().toISOString()
-        });
-    } catch (error) {
-      console.error("Error creating notification:", error);
-    }
-  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
