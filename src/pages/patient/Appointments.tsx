@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
+import { createNotification } from "@/lib/notifications";
 import { PatientLayout } from "@/components/layout/PatientLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -125,6 +126,15 @@ export default function Appointments() {
         .eq('id', appointmentToCancel.id);
 
       if (error) throw error;
+
+      // Notify the doctor about the cancellation
+      await createNotification({
+        user_id: appointmentToCancel.doctor_id,
+        title: 'Appointment Canceled',
+        message: `The appointment on ${format(parseISO(appointmentToCancel.appointment_date), 'MMM d, yyyy')} at ${formatAppointmentTime(appointmentToCancel.start_time)} was canceled.`,
+        type: 'appointment',
+        related_id: appointmentToCancel.id,
+      }, supabase);
 
       toast({
         title: "Appointment Canceled",

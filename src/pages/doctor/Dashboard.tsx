@@ -108,6 +108,9 @@ export default function DoctorDashboard() {
                   ))}
                 </ul>
               )}
+              <Button size="sm" variant="outline" className="mt-4" onClick={() => navigate('/doctor/appointments')}>
+                {t('viewAllAppointments')}
+              </Button>
             </CardContent>
           </Card>
 
