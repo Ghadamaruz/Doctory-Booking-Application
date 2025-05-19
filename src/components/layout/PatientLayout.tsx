@@ -1,0 +1,22 @@
+
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { PatientSidebar } from "./PatientSidebar";
+import { LanguageSwitcher } from "../common/LanguageSwitcher";
+
+export function PatientLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full bg-background">
+        <PatientSidebar />
+        <main className="flex-1 overflow-y-auto">
+          <div className="container mx-auto p-6">
+            <div className="flex justify-end mb-4">
+              <LanguageSwitcher />
+            </div>
+            {children}
+          </div>
+        </main>
+      </div>
+    </SidebarProvider>
+  );
+}
